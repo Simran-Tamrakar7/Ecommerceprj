@@ -63,10 +63,16 @@ $("#commentForm").submit(function (e) {
 
 
 $(document).ready(function () {
-    $(".filter-checkbox").on("click", function () {
+    $(".filter-checkbox, #price-filter-btn").on("click", function () {
         console.log("A checkbox have been clicked");
-        
+
         let filter_object = {}
+
+        let min_price = $("#max_price").attr("min")
+        let max_price = $("#max_price").val()
+
+        filter_object.min_price = min_price;
+        filter_object.max_price = max_price;
 
         $(".filter-checkbox").each(function () {
             let filter_value = $(this).val()
@@ -88,11 +94,12 @@ $(document).ready(function () {
                 console.log("Trying to filter product...");
             },
             success: function (response) {
-                console.log(response);
+                console.log(response.length);
                 console.log("Data filtred successfully...");
+                $(".totall-product").hide()
                 $("#filtered-product").html(response.data)
             }
-        }) 
+        })
     })
 
     $("#max_price").on("blur", function () {
@@ -111,8 +118,8 @@ $(document).ready(function () {
             max_price = Math.round(max_price * 100) / 100
 
 
-            // console.log("Max Price is:", min_price);
-            // console.log("Min Price is:", max_price);
+            // console.log("Max Price is:", min_Price);
+            // console.log("Min Price is:", max_Price);
 
             alert("Price must between $" + min_price + ' and $' + max_price)
             $(this).val(min_price)
@@ -125,7 +132,5 @@ $(document).ready(function () {
         }
 
     })
-})
-     
 
-// 
+})
