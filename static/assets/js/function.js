@@ -90,10 +90,42 @@ $(document).ready(function () {
             success: function (response) {
                 console.log(response);
                 console.log("Data filtred successfully...");
-                // $(".totall-product").hide()
                 $("#filtered-product").html(response.data)
             }
         }) 
     })
+
+    $("#max_price").on("blur", function () {
+        let min_price = $(this).attr("min")
+        let max_price = $(this).attr("max")
+        let current_price = $(this).val()
+
+        // console.log("Current Price is:", current_price);
+        // console.log("Max Price is:", max_price);
+        // console.log("Min Price is:", min_price);
+
+        if (current_price < parseInt(min_price) || current_price > parseInt(max_price)) {
+            // console.log("Price Error Occured");
+
+            min_price = Math.round(min_price * 100) / 100
+            max_price = Math.round(max_price * 100) / 100
+
+
+            // console.log("Max Price is:", min_price);
+            // console.log("Min Price is:", max_price);
+
+            alert("Price must between $" + min_price + ' and $' + max_price)
+            $(this).val(min_price)
+            $('#range').val(min_price)
+
+            $(this).focus()
+
+            return false
+
+        }
+
+    })
 })
-      
+     
+
+// 
