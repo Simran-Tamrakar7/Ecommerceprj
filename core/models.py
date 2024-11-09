@@ -1,10 +1,9 @@
-from email.policy import default
-from pyexpat import model
-from unicodedata import decimal
 from django.db import models
 from shortuuid.django_fields import ShortUUIDField
 from django.utils.html import mark_safe
 from userauths.models import User
+from taggit.managers import TaggableManager
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 
@@ -63,7 +62,8 @@ class Vendor(models.Model):
     title = models.CharField(max_length=100, default="Nesttify")
     image = models.ImageField(upload_to= user_directory_path, default="vendor.jpg")
     cover_image = models.ImageField(upload_to= user_directory_path, default="vendor.jpg")
-    description = models.TextField(null=True, blank=True, default="I am a vendor")
+    # description = models.TextField(null=True, blank=True, default="I am a vendor")
+    description = RichTextUploadingField(null=True, blank=True, default="I am a vendor")
 
     address = models.CharField(max_length=100,default="123 Main Street.")
     contact = models.CharField(max_length=100, default="+123 (456) 789")
@@ -95,12 +95,21 @@ class Product(models.Model):
     
     title = models.CharField(max_length=100, default="Fresh Pear")
     image = models.ImageField(upload_to= user_directory_path, default="product.jpg")
-    description = models.TextField(null=True, blank=True, default="This is the product")
+    # description = models.TextField(null=True, blank=True, default="This is the product")
+    description = RichTextUploadingField(null=True, blank=True, default="This is the product")
 
     price = models.DecimalField(max_digits=999999999999999, decimal_places=2, default="1.99" )
     old_price = models.DecimalField(max_digits=999999999999999, decimal_places=2, default="2.99" )
 
-    specifications= models.TextField(null=True, blank=True)
+    specifications= RichTextUploadingField(null=True, blank=True)
+    # specifications= models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=100, default="Organic",null=True,blank=True)
+    stock_count = models.CharField(max_length=100, default="10",null=True,blank=True)
+    life = models.CharField(max_length=100, default="100 Days",null=True,blank=True)    
+    mfd = models.DateTimeField(auto_now_add=False,null=True,blank=True)
+
+    tags= TaggableManager(blank=True)
+
     # tags = models.ForeignKey(Tags, on_delete=models.SET_NULL, null=True)
 
     product_status = models.CharField(choices=STATUS,max_length=10, default="in_review")
@@ -133,8 +142,8 @@ class Product(models.Model):
 
 
 class ProductImages(models.Model):
-  image = models.ImageField(upload_to= "product-images", default="product.jpg")  
-  product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+  images = models.ImageField(upload_to= "product-images", default="product.jpg")  
+  product = models.ForeignKey(Product, related_name= "p_images",on_delete=models.SET_NULL, null=True)
   date = models.DateTimeField(auto_now_add=True)
 
   
@@ -195,7 +204,7 @@ class CartOrderItems(models.Model):
 
 class ProductReview(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True,related_name="review")
     review = models.TextField()
     rating = models.IntegerField(choices=RATING, default=None)
     date = models.DateTimeField(auto_now_add=True)
