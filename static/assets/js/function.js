@@ -142,7 +142,7 @@ $(document).ready(function () {
         let product_title = $(".product-title-" + index).val()
     
         let product_id = $(".product-id-" + index).val()
-        let product_price = $("#current-product-price-" + index).text()
+        let product_price = $("current-product-price-" + index).text()
     
         let product_pid = $(".product-pid-" + index).val()
         let product_image = $(".product-image-" + index).val()
@@ -165,7 +165,7 @@ $(document).ready(function () {
                 'image': product_image,
                 'qty': quantity,
                 'title': product_title,
-                'price': product_price,
+                'price': product_price
             },
             dataType: 'json',
             beforeSend: function () {
@@ -177,6 +177,7 @@ $(document).ready(function () {
 
                 console.log("Added Product to Cart!");
                 $(".cart-items-count").text(response.totalcartitems)
+                this_val.attr('disabled',false);
 
 
             }

@@ -166,7 +166,7 @@ $(document).ready(function () {
                 'image': product_image,
                 'qty': quantity,
                 'title': product_title,
-                'price': product_price,
+                'price': product_price
             },
             dataType: 'json',
             beforeSend: function () {

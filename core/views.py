@@ -1,11 +1,12 @@
 
 from django.http import JsonResponse
-from django.shortcuts import render,get_list_or_404
+from django.shortcuts import redirect, render,get_list_or_404
 from django.db.models import Count,Avg
 from taggit.models import Tag
 from core.models import Product,Category,Vendor, CartOrder, CartOrderItems,ProductImages, ProductReview, wishlist, Address
 from core.forms import  ProductReview,ProductReviewForm
 from django.template.loader import render_to_string
+from django.contrib import messages
 
 def index(request):
     # products = Product.objects.all().order_by("-id") vdo14
@@ -188,6 +189,7 @@ def add_to_cart(request):
         'image':request.GET['image'],
         'pid':request.GET['pid'],
     }
+    print(cart_product) 
     
     if 'cart_data_obj' in request.session:
         if str(request.GET['id']) in request.session['cart_data_obj']:
@@ -205,4 +207,34 @@ def add_to_cart(request):
 
     
 
+def cart_view(request):
+    cart_total_amount = 0
 
+    if 'cart_data_obj' in request.session:
+        for p_id, item in request.session['cart_data_obj'].items():
+            cart_total_amount += int(item['qty'])  * float(item['price'])
+            # cart_total_amount += int(item['qty'])
+        return render(request,"core/cart.html",{"cart_data":request.session['cart_data_obj'],'totalcartitems':len(request.session['cart_data_obj']),'cart_total_amount':cart_total_amount})
+    else:
+        messages.warning(request,"Your cart is empty")
+        return redirect("core:index")
+
+
+        
+# def cart_view(request):
+#     cart_total_amount = 0
+#     cart_p = {}
+#     cart_p[str(request.GET['id'])] = {
+#         'title': request.GET['title'],
+#         'qty': request.GET['qty'],
+#         'price': request.GET['price']
+#     }
+
+#     if 'cart_data_obj' in request.session:
+#         for p_id, item in request.session['cart_data_obj'].items():
+#             # cart_total_amount += int(item['qty']) * float(item['price'])
+#             cart_total_amount += int(item['qty'])
+#         return render(request,"core/cart.html",{"cart_data":request.session['cart_data_obj'],'totalcartitems':len(request.session['cart_data_obj']),'cart_total_amount':cart_total_amount})
+#     else:
+#         messages.warning(request,"Your cart is empty")
+        # return redirect("core:index")
